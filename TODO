@@ -1,0 +1,20 @@
+TODO: write filters 
+[ ] filter is created from converting a String into the filter
+[ ] filters should read many strings and determine if each contain some explicitly provided text fragments a wildcard character can be provided
+[ ] filters can return a collection of the ordened fixed texts
+[ ] filters can return a collection of the ordened text catched by the wild cards
+[ ] alternatively the wildcard can be a counter
+TODO: write renamer
+[ ] Similar to filter renamer is created from convertig a String into the renamer
+[ ] the renamer will take a collection of strings "A" (fixed text) and concatenate them adding other text from a different set of text "B" (wildcard catched text)
+[ ] using the wildcard will insert from B using the same relative position (using it for the first time will pick the first wildcard catched text)
+[ ] the renamer should be able to select from the "B" by position requires an 'opening' and 'closing' position selector.
+[ ] renamer should not actually rename files just provide an array containing the original and modified name
+TODO: write cli
+[ ] Convert arguments into an options object that will feed filters functions, renamer functions
+[ ] targetd directory: starting path of the tool
+[ ] filter_string: the string with the wildcards
+[ ] wildcard_char: the character used as wildcard
+[ ] renamer_string: the template used to create the renamer
+[ ] position_selector_wrapper: Opening and Closing characters for renamer position selectionr (requires 2 characters exactly)
+[ ] dry_run: perform a dry run, not actually rename files but output the result.
