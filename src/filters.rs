@@ -123,7 +123,7 @@ mod tests {
     #[test]
     fn test_collect_wildcards_two_counters() {
         let mut filter = RenameFilter {
-            string_representation: "file_{1:1}_name_{10:5}".to_string(),
+            string_representation: "file_{ 1   : 1      }_name_{10:5}".to_string(),
             counters: vec![Counter::new(1, 1), Counter::new(10, 5)],
             wildcard_type: vec![WildcardType::Counter, WildcardType::Counter],
             ..Default::default()
