@@ -88,6 +88,7 @@ mod tests {
     fn test_collect_wildcards_no_wildcards() {
         let mut filter = RenameFilter {
             string_representation: "file_name".to_string(),
+            fixed_str: vec!["file_name".to_string()],
             ..Default::default()
         };
         let result = filter.collect_wildcards("file_name");
@@ -100,6 +101,7 @@ mod tests {
         let mut filter = RenameFilter {
             string_representation: "file_*_name_*".to_string(),
             wildcard_type: vec![WildcardType::String, WildcardType::String],
+            fixed_str: vec!["file_".to_string(), "_name_".to_string(), "".to_string()],
             ..Default::default()
         };
         let result = filter.collect_wildcards("file_123_name_456");
@@ -112,6 +114,7 @@ mod tests {
             string_representation: "file_{1:1}_name".to_string(),
             counters: vec![Counter::new(1, 1)],
             wildcard_type: vec![WildcardType::Counter],
+            fixed_str: vec!["file_".to_string(), "_name".to_string()],
             ..Default::default()
         };
         let result1 = filter.collect_wildcards("file_123_name");
@@ -126,6 +129,7 @@ mod tests {
             string_representation: "file_{ 1   : 1      }_name_{10:5}".to_string(),
             counters: vec![Counter::new(1, 1), Counter::new(10, 5)],
             wildcard_type: vec![WildcardType::Counter, WildcardType::Counter],
+            fixed_str: vec!["file_".to_string(), "_name_".to_string(), "".to_string()],
             ..Default::default()
         };
         let result1 = filter.collect_wildcards("file_123_name_456");
@@ -163,7 +167,7 @@ mod tests {
     fn test_does_fulfill_partial_match() {
         let filter = RenameFilter {
             string_representation: "file_*_name_*".to_string(),
-            fixed_str: vec!["file_".to_string(), "_name_".to_string()],
+            fixed_str: vec!["file_".to_string(), "_name_".to_string(), "".to_string()],
             wildcard_type: vec![WildcardType::String, WildcardType::String],
             ..Default::default()
         };
@@ -175,7 +179,7 @@ mod tests {
     #[test]
     fn test_rename_filter_new_with_string_wildcards() {
         let filter = RenameFilter::new("file_*_name_*".to_string(), '*');
-        assert_eq!(filter.fixed_str, vec!["file_", "_name_"], "Fixed strings should be extracted correctly.");
+        assert_eq!(filter.fixed_str, vec!["file_", "_name_", ""], "Fixed_str should include an empty string at the end for the last wildcard.");
         assert_eq!(filter.wildcard_type.len(), 2, "Two wildcards should be detected.");
         assert!(matches!(filter.wildcard_type[0], WildcardType::String), "First wildcard is a string.");
         assert!(matches!(filter.wildcard_type[1], WildcardType::String), "Second wildcard is a string.");
@@ -186,6 +190,7 @@ mod tests {
     fn test_rename_filter_new_with_counters_no_spaces() {
         let filter = RenameFilter::new("file_{1:1}_name_{10:5}".to_string(), '*');
         assert_eq!(filter.fixed_str, vec!["file_", "_name_"], "Fixed strings should be extracted correctly.");
+        assert_eq!(filter.fixed_str, vec!["file_", "_name_", ""], "Fixed_str should include an empty string at the end for the last wildcard.");
         assert_eq!(filter.wildcard_type.len(), 2, "Two wildcards should be detected.");
         assert!(matches!(filter.wildcard_type[0], WildcardType::Counter), "First wildcard is a counter.");
         assert!(matches!(filter.wildcard_type[1], WildcardType::Counter), "Second wildcard is a counter.");
@@ -199,7 +204,8 @@ mod tests {
     #[test]
     fn test_rename_filter_new_with_counters_with_spaces() {
         let filter = RenameFilter::new("file_{  1  :  1  }_name_{  10  :  5  }".to_string(), '*');
-        assert_eq!(filter.fixed_str, vec!["file_", "_name_"], "Fixed strings should be extracted correctly.");
+        let filter = RenameFilter::new("file_{  1  :  1  }_name_{  10  :  5  }_".to_string(), '*');
+        assert_eq!(filter.fixed_str, vec!["file_", "_name_", ""], "Fixed_str should include an empty string at the end for the last wildcard.");
         assert_eq!(filter.wildcard_type.len(), 2, "Two wildcards should be detected.");
         assert!(matches!(filter.wildcard_type[0], WildcardType::Counter), "First wildcard is a counter.");
         assert!(matches!(filter.wildcard_type[1], WildcardType::Counter), "Second wildcard is a counter.");
