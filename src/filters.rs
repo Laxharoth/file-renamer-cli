@@ -204,7 +204,6 @@ mod tests {
     #[test]
     fn test_rename_filter_new_with_counters_with_spaces() {
         let filter = RenameFilter::new("file_{  1  :  1  }_name_{  10  :  5  }".to_string(), '*');
-        let filter = RenameFilter::new("file_{  1  :  1  }_name_{  10  :  5  }_".to_string(), '*');
         assert_eq!(filter.fixed_str, vec!["file_", "_name_", ""], "Fixed_str should include an empty string at the end for the last wildcard.");
         assert_eq!(filter.wildcard_type.len(), 2, "Two wildcards should be detected.");
         assert!(matches!(filter.wildcard_type[0], WildcardType::Counter), "First wildcard is a counter.");
