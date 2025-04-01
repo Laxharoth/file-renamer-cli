@@ -22,6 +22,8 @@ impl Counter{
     }
 }
 
+fn get_char(string:&String, index:&usize)->char{string.chars().nth(*index).unwrap()}
+
 enum WildcardType{
     Counter,
     String,
@@ -34,23 +36,238 @@ pub struct RenameFilter{
     counters: Vec<Counter>,
     wildcard_type: Vec<WildcardType>,
 }
+
+enum AutomataResult{
+    Success,
+    Failure,
+}
+
+fn rename_filter_find_counter_automata(end_index: &mut usize, string_representation: &String, counter_start: &mut IntPR, counter_increment: &mut IntPR)->AutomataResult{
+    let mut state = 1;
+    loop {
+        *end_index += 1;
+        match state {
+            1 => {
+                if get_char(string_representation, end_index) == ' '{
+                    continue;
+                }
+                if get_char(string_representation, end_index).is_digit(10){
+                    *counter_start = get_char(string_representation, &end_index).to_digit(10).unwrap() as IntPR;
+                    state = 2;
+                }
+                else{
+                    break;
+                }
+            }
+            2 => {
+                if get_char(string_representation, end_index).is_digit(10){
+                    *counter_start = *counter_start * 10 + get_char(string_representation, end_index).to_digit(10).unwrap() as IntPR;
+                    continue;
+                }
+                if get_char(string_representation, end_index) == ' '{
+                    state = 3;
+                    continue;
+                }
+                if get_char(string_representation, end_index) == ':'{
+                    state = 4;
+                }
+                else{
+                    break;
+                }
+            }
+            3 => {
+                if get_char(string_representation, end_index) == ' '{
+                    continue;
+                }
+                if get_char(string_representation, end_index) == ':'{
+                    state = 4;
+                }
+                else{
+                    break;
+                }
+            }
+            4 => {
+                if get_char(string_representation, end_index) == ' '{
+                    continue;
+                }
+                if get_char(string_representation, end_index).is_digit(10){
+                    *counter_increment = get_char(string_representation, end_index).to_digit(10).unwrap() as IntPR;
+                    state = 5;
+                }
+                else{
+                    break;
+                }
+            }
+            5 => {
+                if get_char(string_representation, end_index).is_digit(10){
+                    *counter_increment = *counter_increment * 10 + get_char(string_representation, end_index).to_digit(10).unwrap() as IntPR;
+                    continue;
+                }
+                if get_char(string_representation, end_index) == ' '{
+                    state = 6;
+                    continue;
+                }
+                if get_char(string_representation, end_index) == '}'{
+                    state = 7;
+                    break;
+                }
+                else{
+                    break;
+                }
+            }
+            6 => {
+                if get_char(string_representation, end_index) == ' '{
+                    continue;
+                }
+                if get_char(string_representation, end_index) == '}'{
+                    state = 7;
+                    break;
+                }
+                else{
+                    break;
+                }
+            }
+            _ => break
+            }
+        }
+        print!("state: {}", state);
+        match state{
+            7 => return AutomataResult::Success,
+            _ => return AutomataResult::Failure,
+        }
 }
 
 impl RenameFilter{
-    pub fn new(string_representation: String, wildcard_char: char){
-        
+    pub fn new(string_representation: String, wildcard_char: char)->Self{
+        let mut rf = RenameFilter{
+            string_representation,
+            wildcard_char,
+            fixed_str: vec![],
+            counters: vec![],
+            wildcard_type: vec![],
+        };
+
+
+        let mut start_index = 0;
+        let mut end_index = 0;
+        while end_index  < rf.string_representation.len(){
+            // case where wildcard is found
+            if get_char(&rf.string_representation, &end_index) == wildcard_char{
+                rf.fixed_str.push(rf.string_representation[start_index..end_index].to_string());
+                start_index = end_index + 1;
+                end_index = end_index + 1;
+                rf.wildcard_type.push(WildcardType::String);
+                continue;
+            }
+            // case where counter could be found
+            if get_char(&rf.string_representation, &end_index) == '{'{
+                let starting_counter_wildcard = end_index;
+                // automata  '{' -> ' '* -> digit+ -> ' '* -> ':' -> ' '* -> digit+ -> ' '* -> '}'
+                let mut counter_start:IntPR = 0;
+                let mut counter_increment:IntPR = 0;
+                match rename_filter_find_counter_automata(&mut end_index, &rf.string_representation, &mut counter_start, &mut counter_increment){
+                    AutomataResult::Success => {
+                        rf.fixed_str.push(rf.string_representation[start_index..starting_counter_wildcard].to_string());
+                        rf.counters.push(Counter::new(counter_start, counter_increment));
+                        rf.wildcard_type.push(WildcardType::Counter);
+                        start_index = end_index + 1;
+                        end_index = end_index + 1;
+                        continue;
+                    },
+                    AutomataResult::Failure => {}
+                }
+            }
+            end_index += 1;
+        }
+        rf.fixed_str.push(rf.string_representation[start_index..].to_string());
+
+        rf
     }
 
     pub fn get_fixed_str(&self) -> Vec<String>{
-        vec![]
+        self.fixed_str.clone()
     }
 
     pub fn does_fulfill(&self, filename: &str) -> bool{
-        false
+        let mut filename_index = 0;
+        for fixed_str in &self.fixed_str[..self.fixed_str.len()-1]{
+            let index = filename[filename_index..].find(fixed_str);
+            match index{
+                Some(i) => filename_index += i + fixed_str.len(),
+                None => return false,
+            }
+        }
+        if &self.fixed_str[self.fixed_str.len()-1] == ""{
+            return true;
+        }
+        let index = filename[filename_index..].find(&self.fixed_str[self.fixed_str.len()-1]);
+        match index{
+            Some(i) => return filename[filename_index+i..] == self.fixed_str[self.fixed_str.len()-1],
+            None => return false,
+        }
     }
 
     pub fn collect_wildcards(&mut self, filename: &str) -> Vec<String>{
-        vec![]
+        if self.wildcard_type.is_empty(){
+            return vec![];
+        }
+
+        let mut filename_index = 0;
+        let mut wildcard_index = 0;
+        let mut counter_index = 0;
+        let mut catched_wildcards = vec![];
+        
+        let index = filename[filename_index..].find(&self.fixed_str[0]);
+        match index{
+            Some(i) => filename_index += i + self.fixed_str[0].len(),
+            None => return vec![],
+        }
+
+        for fixed_str in &self.fixed_str[1..self.fixed_str.len()-1]{
+            let index = filename[filename_index..].find(fixed_str);
+            match index{
+                Some(i) => {
+                    match &self.wildcard_type[wildcard_index]{
+                        WildcardType::Counter =>{
+                            catched_wildcards.push(self.counters[counter_index].count().to_string());
+                            counter_index += 1;
+                        }
+                        WildcardType::String =>{
+                            catched_wildcards.push(filename[filename_index..filename_index+i].to_string());
+                        }
+                    }
+                    wildcard_index += 1;
+                    filename_index += i + fixed_str.len();
+                },
+                None => return vec![],
+            }
+        }
+        if &self.fixed_str[self.fixed_str.len()-1] == ""{
+            match &self.wildcard_type[wildcard_index]{
+                WildcardType::Counter =>{
+                    catched_wildcards.push(self.counters[counter_index].count().to_string());
+                }
+                WildcardType::String =>{
+                    catched_wildcards.push(filename[filename_index..].to_string());
+                }
+            }
+            return  catched_wildcards;
+        }
+        let index = filename[filename_index..].find(&self.fixed_str[self.fixed_str.len()-1]);
+        match index{
+            Some(i) => {
+                match &self.wildcard_type[wildcard_index]{
+                    WildcardType::Counter =>{
+                        catched_wildcards.push(self.counters[counter_index].count().to_string());
+                    }
+                    WildcardType::String =>{
+                        catched_wildcards.push(filename[filename_index..filename_index+i].to_string());
+                    }
+                }
+            },
+            None => return vec![],
+        }
+        return catched_wildcards;
     }
 }
 
