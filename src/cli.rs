@@ -1,24 +1,19 @@
 
 
+
+        }
+    }
+
+        }
+    }
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::env;
     use std::path::PathBuf;
-    use std::fs;
-
-    fn setup_test_directory() -> PathBuf {
-        let test_dir = PathBuf::from("test_dir");
-        if !test_dir.exists() {
-            fs::create_dir(&test_dir).unwrap();
-        }
-        test_dir
-    }
-
-    fn cleanup_test_directory(test_dir: &PathBuf) {
-        if test_dir.exists() {
-            fs::remove_dir(test_dir).unwrap();
-        }
-    }
 
     #[test]
     fn test_help_parameter() {
@@ -50,19 +45,18 @@ mod tests {
 
     #[test]
     fn test_directory_parameter() {
-        let test_dir = setup_test_directory();
+        let current_dir = env::current_dir().unwrap();
         let args = vec![
             "program".to_string(),
             "--directory".to_string(),
-            test_dir.to_str().unwrap().to_string(),
+            current_dir.to_str().unwrap().to_string(),
         ];
         let params = CliParameters::new(args);
         assert_eq!(
             params.Directory,
-            test_dir,
-            "Directory should be set to the test directory."
+            current_dir,
+            "Directory should be set to the current execution root."
         );
-        cleanup_test_directory(&test_dir);
     }
 
     #[test]
@@ -124,12 +118,12 @@ mod tests {
 
     #[test]
     fn test_multiple_parameters() {
-        let test_dir = setup_test_directory();
+        let current_dir = env::current_dir().unwrap();
         let args = vec![
             "program".to_string(),
             "--help".to_string(),
             "--directory".to_string(),
-            test_dir.to_str().unwrap().to_string(),
+            current_dir.to_str().unwrap().to_string(),
             "--filter".to_string(),
             "file_*".to_string(),
         ];
@@ -137,39 +131,37 @@ mod tests {
         assert!(params.Help, "Help flag should be set to true.");
         assert_eq!(
             params.Directory,
-            test_dir,
-            "Directory should be set to the test directory."
+            current_dir,
+            "Directory should be set to the current execution root."
         );
         assert_eq!(
             params.Filter, "file_*",
             "Filter should be set to 'file_*'."
         );
-        cleanup_test_directory(&test_dir);
     }
 
     #[test]
     fn test_parameters_in_different_order() {
-        let test_dir = setup_test_directory();
+        let current_dir = env::current_dir().unwrap();
         let args = vec![
             "program".to_string(),
             "--filter".to_string(),
             "file_*".to_string(),
             "--directory".to_string(),
-            test_dir.to_str().unwrap().to_string(),
+            current_dir.to_str().unwrap().to_string(),
             "--help".to_string(),
         ];
         let params = CliParameters::new(args);
         assert!(params.Help, "Help flag should be set to true.");
         assert_eq!(
             params.Directory,
-            test_dir,
-            "Directory should be set to the test directory."
+            current_dir,
+            "Directory should be set to the current execution root."
         );
         assert_eq!(
             params.Filter, "file_*",
             "Filter should be set to 'file_*'."
         );
-        cleanup_test_directory(&test_dir);
     }
 
     #[test]
@@ -207,11 +199,11 @@ mod tests {
 
     #[test]
     fn test_directory_exists() {
-        let test_dir = setup_test_directory();
+        let current_dir = env::current_dir().unwrap();
         let args = vec![
             "program".to_string(),
             "--directory".to_string(),
-            test_dir.to_str().unwrap().to_string(),
+            current_dir.to_str().unwrap().to_string(),
         ];
         let params = CliParameters::new(args);
         assert!(
@@ -222,6 +214,5 @@ mod tests {
             params.Directory.is_dir(),
             "Directory should be a valid directory."
         );
-        cleanup_test_directory(&test_dir);
     }
 }
