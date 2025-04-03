@@ -1,10 +1,173 @@
+struct CliParameters {
+    Help: bool,
+    Version: bool,
+    DryRun: bool,
+    Recursive: bool,
+    Directory: std::path::PathBuf,
+    Filter: String,
+    Output: String,
+    WildcardChar: char,
+    PositionSelectWrapper: (char, char),
+}
 
+enum ParametersType {
+    Help,
+    Version,
+    DryRun,
+    Recursive,
+    Directory,
+    Filter,
+    Output,
+    WildcardChar,
+    PositionSelectWrapper,
+    Error
+}
 
+fn map_parameter_to_type(parameter: &String) -> ParametersType {
+    match parameter.as_str() {
+        "--help" => ParametersType::Help,
+        "-h" => ParametersType::Help,
+        "--version" => ParametersType::Version,
+        "--dry-run" => ParametersType::DryRun,
+        "--recursive" => ParametersType::Recursive,
+        "-r" => ParametersType::Recursive,
+        "--directory" => ParametersType::Directory,
+        "-d" => ParametersType::Directory,
+        "--filter" => ParametersType::Filter,
+        "-f" => ParametersType::Filter,
+        "--output" => ParametersType::Output,
+        "-o" => ParametersType::Output,
+        "--wildcard-char" => ParametersType::WildcardChar,
+        "--position-select-wrapper" => ParametersType::PositionSelectWrapper,
+        _ => ParametersType::Error,
+    }
+}
 
+impl PartialEq for ParametersType{
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (ParametersType::Help, ParametersType::Help) => true,
+            (ParametersType::Version, ParametersType::Version) => true,
+            (ParametersType::DryRun, ParametersType::DryRun) => true,
+            (ParametersType::Recursive, ParametersType::Recursive) => true,
+            (ParametersType::Directory, ParametersType::Directory) => true,
+            (ParametersType::Filter, ParametersType::Filter) => true,
+            (ParametersType::Output, ParametersType::Output) => true,
+            (ParametersType::WildcardChar, ParametersType::WildcardChar) => true,
+            (ParametersType::PositionSelectWrapper, ParametersType::PositionSelectWrapper) => true,
+            _ => false,
         }
     }
+}
 
+impl std::hash::Hash for ParametersType {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        core::mem::discriminant(self).hash(state);
+    }
+}
+
+impl Eq for ParametersType {
+    
+}
+
+impl CliParameters {
+    fn new(args: Vec<String>) -> Self {
+        use ParametersType::*;
+        let mut default =CliParameters {
+            Help: false,
+            Version: false,
+            DryRun: false,
+            Recursive: false,
+            Directory: std::path::PathBuf::new(),
+            Filter: "".to_string(),
+            Output: "".to_string(),
+            WildcardChar: '*',
+            PositionSelectWrapper: ('(', ')'),
+        };
+        let mut defaults_overriden :std::collections::HashSet<ParametersType> = std::collections::HashSet::new();
+        let mut index = 1;
+        while index < args.len(){
+            let parameter_type = map_parameter_to_type(&args[index]);
+            if defaults_overriden.contains(&parameter_type) {
+                panic!("Duplicate parameter: {}", args[index]);
+            }
+            match &parameter_type{
+                Help => default.Help = true,
+                Version => default.Version = true,
+                DryRun => default.DryRun = true,
+                Recursive => default.Recursive = true,
+                Directory => {
+                    index += 1;
+                    if index < args.len() {
+                        default.Directory = std::path::PathBuf::from(&args[index]);
+                        if !default.Directory.exists(){
+                            panic!("Directory does not exist.");
+                        }
+                    }
+                    else {
+                        panic!("Directory parameter requires a value.");
+                    }
+                },
+                Filter => {
+                    index +=1;
+                    if index < args.len() {
+                        default.Filter = args[index].clone();
+                    }
+                    else {
+                        panic!("Filter parameter requires a value.");
+                    }
+                },
+                Output => {
+                    index += 1;
+                    if index < args.len() {
+                        default.Output = args[index].clone();
+                    }
+                    else {
+                        panic!("Output parameter requires a value.");
+                    }
+                },
+                WildcardChar => {
+                    index += 1;
+                    if index < args.len() {
+                        let wildcard_char = &args[index];
+                        if wildcard_char.len() == 1 {
+                            default.WildcardChar = wildcard_char.chars().next().unwrap();
+                        }
+                        else {
+                            panic!("WildcardChar parameter must be a single character.");
+                        }
+                    }
+                    else {
+                        panic!("WildcardChar parameter requires a value.");
+                    }
+                },
+                PositionSelectWrapper => {
+                    index += 1;
+                    if index < args.len() {
+                        let position_select_wrapper = &args[index];
+                        if position_select_wrapper.len() == 2 {
+                            default.PositionSelectWrapper = (
+                                position_select_wrapper.chars().nth(0).unwrap(),
+                                position_select_wrapper.chars().nth(1).unwrap(),
+                            );
+                        }
+                        else {
+                            panic!("PositionSelectWrapper parameter must be two characters.");
+                        }
+                    }
+                    else {
+                        panic!("PositionSelectWrapper parameter requires a value.");
+                    }
+                },
+                Error => {
+                    panic!("Invalid parameter: {}", args[index]);
+                }
+            }
+            defaults_overriden.insert(parameter_type);
+            
+            index += 1;
         }
+        default   
     }
 }
 

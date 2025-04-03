@@ -11,10 +11,10 @@ TODO: write renamer
 ☐ the renamer should be able to select from the "B" by position requires an 'opening' and 'closing' position selector.
 ☐ renamer should not actually rename files just provide an array containing the original and modified name
 TODO: write cli
-☐ Convert arguments into an options object that will feed filters functions, renamer functions
-☐ targetd directory: starting path of the tool
-☐ filter_string: the string with the wildcards
-☐ wildcard_char: the character used as wildcard
-☐ renamer_string: the template used to create the renamer
-☐ position_selector_wrapper: Opening and Closing characters for renamer position selectionr (requires 2 characters exactly)
-☐ dry_run: perform a dry run, not actually rename files but output the result.
+✔ Convert arguments into an options object that will feed filters functions, renamer functions @done(25-04-02 14:32)
+✔ target directory: starting path of the tool @done(25-04-02 14:33)
+✔ filter_string: the string with the wildcards @done(25-04-02 14:33)
+✔ wildcard_char: the character used as wildcard @done(25-04-02 14:33)
+✔ renamer_string: the template used to create the renamer @done(25-04-02 14:33)
+✔ position_selector_wrapper: Opening and Closing characters for renamer position selectionr (requires 2 characters exactly) @done(25-04-02 14:33)
+✔ dry_run: perform a dry run, not actually rename files but output the result. @done(25-04-02 14:33)
