@@ -101,7 +101,7 @@ impl CliParameters {
             match &parameter_type{
                 Help => default.Help = true,
                 Version => default.Version = true,
-                Verbose => default.Verbose = true,
+                ParametersType::Vebose => default.Verbose = true,
                 DryRun => {
                     default.DryRun = true;
                     default.Verbose = true;
@@ -172,7 +172,7 @@ impl CliParameters {
                 },
                 Error => {
                     panic!("Invalid parameter: {}", args[index]);
-                }
+                },
             }
             defaults_overriden.insert(parameter_type);
             
