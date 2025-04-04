@@ -125,7 +125,7 @@ impl Renamer {
         self.FixedStrings.clone()
     }
 
-    pub fn generate_rename_filename(&self, filename:&String, wildcard_catched: &Vec<String>) -> String{
+    pub fn generate_rename_filename(&self, wildcard_catched: &Vec<String>) -> String{
         let mut result = String::new();
 
         for i in 0..self.PositionsOrder.len(){
