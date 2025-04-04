@@ -38,7 +38,7 @@ file-renamer v{} - A file renaming utility
         file-renamer -d /path/to/directory -f "photo_file-$-$-$-.png" -n "photo_file$$$.png" --wildcard-char "$"
             result:
                 photo_file-1-2-3.png -> photo_file123.png
-        file-renamer -d /path/to/directory -f "{1:1}.avi" -n "video_clips*.avi" --wildcard-char "*" 
+        file-renamer -d /path/to/directory -f "{}.avi" -n "video_clips*.avi" --wildcard-char "*" 
             result:
                 012014402065465842112.avi -> video_clips1.avi
                 012014402065465d4211c.avi -> video_clips2.avi
@@ -49,7 +49,7 @@ file-renamer v{} - A file renaming utility
                 photo-03-04-2022.png -> photo-2022-03-04-png
                 photo-05-06-2024.png -> photo-2024-05-06-png
                 photo-07-08-2024.png -> photo-2024-07-08-png
-    "#;, version);
+    "#, version, "{1:1}");
     help_string.to_string()
 }
 
