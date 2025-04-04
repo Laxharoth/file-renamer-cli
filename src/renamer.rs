@@ -215,7 +215,7 @@ mod tests {
     fn test_generate_rename_filename_with_wildcard_char() {
         let renamer = Renamer::new("file_*_name_*".to_string(), '*', ('(', ')'));
         let wildcard_catched = vec!["123".to_string(), "456".to_string()];
-        let result = renamer.generate_rename_filename(&"file_123_name_456".to_string(), &wildcard_catched);
+        let result = renamer.generate_rename_filename(&wildcard_catched);
         assert_eq!(
             result,
             "file_123_name_456",
@@ -227,7 +227,7 @@ mod tests {
     fn test_generate_rename_filename_with_position_select_wrapper() {
         let renamer = Renamer::new("file_(0)_name_(1)".to_string(), '*', ('(', ')'));
         let wildcard_catched = vec!["123".to_string(), "456".to_string()];
-        let result = renamer.generate_rename_filename(&"file_123_name_456".to_string(), &wildcard_catched);
+        let result = renamer.generate_rename_filename(&wildcard_catched);
         assert_eq!(
             result,
             "file_123_name_456",
@@ -239,7 +239,7 @@ mod tests {
     fn test_generate_rename_filename_with_both_wildcard_and_position_selectors() {
         let renamer = Renamer::new("file_*_name_(1)_extra_(0)".to_string(), '*', ('(', ')'));
         let wildcard_catched = vec!["123".to_string(), "456".to_string()];
-        let result = renamer.generate_rename_filename(&"file_123_name_456".to_string(), &wildcard_catched);
+        let result = renamer.generate_rename_filename(&wildcard_catched);
         assert_eq!(
             result,
             "file_123_name_456_extra_123",
@@ -252,7 +252,7 @@ mod tests {
         let renamer = Renamer::new("file_(2)_name".to_string(), '*', ('(', ')'));
         let wildcard_catched = vec!["123".to_string(), "456".to_string()];
         let result = std::panic::catch_unwind(|| {
-            renamer.generate_rename_filename(&"file_123_name_456".to_string(), &wildcard_catched)
+            renamer.generate_rename_filename(&wildcard_catched)
         });
         assert!(
             result.is_err(),
@@ -265,7 +265,7 @@ mod tests {
         let renamer = Renamer::new("file_(0)_name".to_string(), '*', ('(', ')'));
         let wildcard_catched: Vec<String> = vec![];
         let result = std::panic::catch_unwind(|| {
-            renamer.generate_rename_filename(&"file_123_name_456".to_string(), &wildcard_catched)
+            renamer.generate_rename_filename(&wildcard_catched)
         });
         assert!(
             result.is_err(),
@@ -277,7 +277,7 @@ mod tests {
     fn test_generate_rename_filename_with_wildcard_at_beginning() {
         let renamer = Renamer::new("*_file_name".to_string(), '*', ('(', ')'));
         let wildcard_catched = vec!["123".to_string()];
-        let result = renamer.generate_rename_filename(&"123_file_name".to_string(), &wildcard_catched);
+        let result = renamer.generate_rename_filename(&wildcard_catched);
         assert_eq!(
             result,
             "123_file_name",
