@@ -1,6 +1,7 @@
 struct CliParameters {
     Help: bool,
     Version: bool,
+    Verbose: bool,
     DryRun: bool,
     Recursive: bool,
     Directory: std::path::PathBuf,
@@ -13,6 +14,7 @@ struct CliParameters {
 enum ParametersType {
     Help,
     Version,
+    Vebose,
     DryRun,
     Recursive,
     Directory,
@@ -20,7 +22,7 @@ enum ParametersType {
     Output,
     WildcardChar,
     PositionSelectWrapper,
-    Error
+    Error,
 }
 
 fn map_parameter_to_type(parameter: &String) -> ParametersType {
@@ -28,6 +30,9 @@ fn map_parameter_to_type(parameter: &String) -> ParametersType {
         "--help" => ParametersType::Help,
         "-h" => ParametersType::Help,
         "--version" => ParametersType::Version,
+        "-V" => ParametersType::Version,
+        "--verbose" => ParametersType::Vebose,
+        "--v" => ParametersType::Vebose,
         "--dry-run" => ParametersType::DryRun,
         "--recursive" => ParametersType::Recursive,
         "-r" => ParametersType::Recursive,
@@ -48,6 +53,7 @@ impl PartialEq for ParametersType{
         match (self, other) {
             (ParametersType::Help, ParametersType::Help) => true,
             (ParametersType::Version, ParametersType::Version) => true,
+            (ParametersType::Vebose, ParametersType::Vebose) => true,
             (ParametersType::DryRun, ParametersType::DryRun) => true,
             (ParametersType::Recursive, ParametersType::Recursive) => true,
             (ParametersType::Directory, ParametersType::Directory) => true,
@@ -76,6 +82,7 @@ impl CliParameters {
         let mut default =CliParameters {
             Help: false,
             Version: false,
+            Verbose: false,
             DryRun: false,
             Recursive: false,
             Directory: std::path::PathBuf::new(),
@@ -94,6 +101,7 @@ impl CliParameters {
             match &parameter_type{
                 Help => default.Help = true,
                 Version => default.Version = true,
+                Verbose => default.Verbose = true,
                 DryRun => default.DryRun = true,
                 Recursive => default.Recursive = true,
                 Directory => {
