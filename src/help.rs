@@ -53,7 +53,7 @@ file-renamer v{} - A file renaming utility
     help_string.to_string()
 }
 
-fn get_version() -> String {
+pub fn get_version() -> String {
     let version_string = format!("file-renamer v{}", version);
     version_string.to_string()
 }
