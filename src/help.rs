@@ -1,6 +1,6 @@
 static version: &str ="1.0.0";
 
-fn get_help_string() -> String {
+pub fn get_help_string() -> String {
     let help_string = format!(r#"
 file-renamer v{} - A file renaming utility
 

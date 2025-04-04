@@ -1,4 +1,4 @@
-struct Renamer{
+pub struct Renamer{
     pub StringRepresentation: String,
     pub WildcardChar: char,
     pub FixedStrings: Vec<String>,

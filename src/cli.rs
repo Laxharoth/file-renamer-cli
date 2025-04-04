@@ -1,4 +1,4 @@
-struct CliParameters {
+pub struct CliParameters {
     Help: bool,
     Version: bool,
     Verbose: bool,
@@ -77,7 +77,7 @@ impl Eq for ParametersType {
 }
 
 impl CliParameters {
-    fn new(args: Vec<String>) -> Self {
+    pub fn new(args: Vec<String>) -> Self {
         use ParametersType::*;
         let mut default =CliParameters {
             Help: false,
