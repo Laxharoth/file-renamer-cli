@@ -10,7 +10,7 @@ TODO: write renamer
 ✔ using the wildcard will insert from B using the same relative position (using it for the first time will pick the first wildcard catched text) @done(25-04-04 10:26)
 ✔ the renamer should be able to select from the "B" by position requires an 'opening' and 'closing' position selector. @done(25-04-04 10:27)
 ✔ renamer should not actually rename files just provide an array containing the original and modified name @done(25-04-04 10:27)
-☐ Check case where a wildcard is at the begining of the string
+✔ Check case where a wildcard is at the begining of the string @done(25-04-04 10:31)
 TODO: write cli
 ✔ Convert arguments into an options object that will feed filters functions, renamer functions @done(25-04-02 14:32)
 ✔ target directory: starting path of the tool @done(25-04-02 14:33)
