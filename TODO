@@ -5,11 +5,11 @@ TODO: write filters
 ✔ filters can return a collection of the ordened text catched by the wild cards @done(25-04-02 11:51)
 ✔ alternatively the wildcard can be a counter @done(25-04-02 11:51)
 TODO: write renamer
-☐ Similar to filter renamer is created from convertig a String into the renamer
-☐ the renamer will take a collection of strings "A" (fixed text) and concatenate them adding other text from a different set of text "B" (wildcard catched text)
-☐ using the wildcard will insert from B using the same relative position (using it for the first time will pick the first wildcard catched text)
-☐ the renamer should be able to select from the "B" by position requires an 'opening' and 'closing' position selector.
-☐ renamer should not actually rename files just provide an array containing the original and modified name
+✔ Similar to filter renamer is created from convertig a String into the renamer @done(25-04-04 10:26)
+✔ the renamer will take a collection of strings "A" (fixed text) and concatenate them adding other text from a different set of text "B" (wildcard catched text) @done(25-04-04 10:26)
+✔ using the wildcard will insert from B using the same relative position (using it for the first time will pick the first wildcard catched text) @done(25-04-04 10:26)
+✔ the renamer should be able to select from the "B" by position requires an 'opening' and 'closing' position selector. @done(25-04-04 10:27)
+✔ renamer should not actually rename files just provide an array containing the original and modified name @done(25-04-04 10:27)
 TODO: write cli
 ✔ Convert arguments into an options object that will feed filters functions, renamer functions @done(25-04-02 14:32)
 ✔ target directory: starting path of the tool @done(25-04-02 14:33)
