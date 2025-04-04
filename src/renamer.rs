@@ -1,8 +1,5 @@
 pub struct Renamer{
-    pub StringRepresentation: String,
-    pub WildcardChar: char,
     pub FixedStrings: Vec<String>,
-    pub PositionSelectWrapper: (char,char),
     pub PositionsOrder: Vec<usize>,
 }
 
@@ -66,8 +63,6 @@ fn selector_wrapper_automata(
             }
         }
     }
-
-    return AutomataResult::Success(0);
 }
 
 impl Renamer {
@@ -113,10 +108,7 @@ impl Renamer {
         FixedStrings.push(StringRepresentation[start_index..end_index].to_string());
 
         Renamer { 
-            StringRepresentation, 
-            WildcardChar, 
             FixedStrings, 
-            PositionSelectWrapper,
             PositionsOrder
         }
     }
@@ -145,9 +137,6 @@ mod tests {
     #[test]
     fn test_renamer_new() {
         let renamer = Renamer::new("file_*_name_*".to_string(), '*', ('(', ')'));
-        assert_eq!(renamer.StringRepresentation, "file_*_name_*", "StringRepresentation should be set correctly.");
-        assert_eq!(renamer.WildcardChar, '*', "WildcardChar should be set to '*'.");
-        assert_eq!(renamer.PositionSelectWrapper, ('(', ')'), "PositionSelectWrapper should be set to ('(', ')').");
         assert_eq!(renamer.FixedStrings, vec!["file_", "_name_", ""], "FixedStrings should be the strings between wildcards.");
     }
 
