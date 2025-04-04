@@ -32,7 +32,7 @@ fn map_parameter_to_type(parameter: &String) -> ParametersType {
         "--version" => ParametersType::Version,
         "-V" => ParametersType::Version,
         "--verbose" => ParametersType::Vebose,
-        "--v" => ParametersType::Vebose,
+        "-v" => ParametersType::Vebose,
         "--dry-run" => ParametersType::DryRun,
         "--recursive" => ParametersType::Recursive,
         "-r" => ParametersType::Recursive,
