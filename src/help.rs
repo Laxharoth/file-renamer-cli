@@ -1,4 +1,4 @@
-static version: &str ="1.0.0";
+static VERSION: &str ="1.0.0";
 
 pub fn get_help_string() -> String {
     let help_string = format!(r#"
@@ -49,11 +49,11 @@ file-renamer v{} - A file renaming utility
                 photo-03-04-2022.png -> photo-2022-03-04-png
                 photo-05-06-2024.png -> photo-2024-05-06-png
                 photo-07-08-2024.png -> photo-2024-07-08-png
-    "#, version, "{1:1}");
+    "#, VERSION, "{1:1}");
     help_string.to_string()
 }
 
 pub fn get_version() -> String {
-    let version_string = format!("file-renamer v{}", version);
+    let version_string = format!("file-renamer v{}", VERSION);
     version_string.to_string()
 }
