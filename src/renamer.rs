@@ -272,4 +272,16 @@ mod tests {
             "Using a position selector when no strings are captured should throw an error."
         );
     }
+
+    #[test]
+    fn test_generate_rename_filename_with_wildcard_at_beginning() {
+        let renamer = Renamer::new("*_file_name".to_string(), '*', ('(', ')'));
+        let wildcard_catched = vec!["123".to_string()];
+        let result = renamer.generate_rename_filename(&"123_file_name".to_string(), &wildcard_catched);
+        assert_eq!(
+            result,
+            "123_file_name",
+            "Filename should be generated correctly with a wildcard replacement at the beginning."
+        );
+    }
 }
