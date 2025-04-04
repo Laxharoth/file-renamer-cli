@@ -31,7 +31,6 @@ enum WildcardType{
 
 pub struct RenameFilter{
     string_representation: String,
-    wildcard_char: char,
     fixed_str: Vec<String>,
     counters: Vec<Counter>,
     wildcard_type: Vec<WildcardType>,
@@ -141,7 +140,6 @@ impl RenameFilter{
     pub fn new(string_representation: String, wildcard_char: char)->Self{
         let mut rf = RenameFilter{
             string_representation,
-            wildcard_char,
             fixed_str: vec![],
             counters: vec![],
             wildcard_type: vec![],
@@ -275,7 +273,6 @@ impl default::Default for RenameFilter{
     fn default() -> Self{
         RenameFilter{
             string_representation: "".to_string(),
-            wildcard_char: '*',
             fixed_str: vec![],
             counters: vec![],
             wildcard_type: vec![],
