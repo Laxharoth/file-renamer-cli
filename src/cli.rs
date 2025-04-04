@@ -1,14 +1,14 @@
 pub struct CliParameters {
-    Help: bool,
-    Version: bool,
-    Verbose: bool,
-    DryRun: bool,
-    Recursive: bool,
-    Directory: std::path::PathBuf,
-    Filter: String,
-    Output: String,
-    WildcardChar: char,
-    PositionSelectWrapper: (char, char),
+    pub Help: bool,
+    pub Version: bool,
+    pub Verbose: bool,
+    pub DryRun: bool,
+    pub Recursive: bool,
+    pub Directory: std::path::PathBuf,
+    pub Filter: String,
+    pub Output: String,
+    pub WildcardChar: char,
+    pub PositionSelectWrapper: (char, char),
 }
 
 enum ParametersType {
