@@ -102,7 +102,10 @@ impl CliParameters {
                 Help => default.Help = true,
                 Version => default.Version = true,
                 Verbose => default.Verbose = true,
-                DryRun => default.DryRun = true,
+                DryRun => {
+                    default.DryRun = true;
+                    default.Verbose = true;
+                },
                 Recursive => default.Recursive = true,
                 Directory => {
                     index += 1;
